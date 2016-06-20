@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data>
+        <!--print-->
+        <record model="ir.action.report" id='print_move'>
+            <field name="name">Imprimir Asiento</field>
+            <field name="model">account.invoice</field>
+            <field name="report_name">account.invoice.print_move</field>
+            <field name="report">nodux_account_withholding_ec/move.odt</field>
+            <field name="style"></field>
+        </record>
+
+       <record model="ir.action.keyword" id="report_move_keyword">
+           <field name="keyword">form_print</field>
+           <field name="model">account.invoice,-1</field>
+           <field name="action" ref="print_move"/>
+       </record>
+
+       <record model="ir.action.wizard" id="wizard_validated">
+            <field name="name">Generar retencion a proveedor</field>
+            <field name="wiz_name">account.invoice.validate_invoice</field>
+            <field name="model">account.invoice</field>
+        </record>
+
+    </data>
+</tryton>
