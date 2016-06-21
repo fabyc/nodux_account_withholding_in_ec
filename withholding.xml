@@ -8,16 +8,14 @@ this repository contains the full copyright notices and license terms. -->
             <field name="name">Imprimir retencion proveedor</field>
             <field name="model">account.withholding</field>
             <field name="report_name">account.withholding.print_withholding</field>
-            <field name="report">nodux_account_withholding_ec/withholding.odt</field>
+            <field name="report">nodux_account_withholding_in_ec/withholding.odt</field>
             <field name="style"></field>
         </record>
-
          <record model="ir.action.keyword" id="report_withholding_keyword">
              <field name="keyword">form_print</field>
              <field name="model">account.withholding,-1</field>
              <field name="action" ref="print_withholding"/>
          </record>
-
         <!--views-->
          <record model="ir.action.act_window" id="act_withholding_in_withholding_form">
              <field name="name">Supplier withholdings</field>
@@ -30,6 +28,12 @@ this repository contains the full copyright notices and license terms. -->
             <field name="sequence" eval="10"/>
             <field name="view" ref="nodux_account_withholding_out_ec.withholding_view_tree"/>
             <field name="act_window" ref="act_withholding_in_withholding_form"/>
+        </record>
+
+        <record model="ir.action.act_window.view" id="act_withholding_in_withholding_form_view2">
+          <field name="sequence" eval="20"/>
+          <field name="view" ref="nodux_account_withholding_out_ec.withholding_view_form"/>
+          <field name="act_window" ref="act_withholding_in_withholding_form"/>
         </record>
 
         <record model="ir.action.act_window.domain" id="act_withholding_in_withholding_domain_draft">

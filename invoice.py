@@ -86,7 +86,7 @@ class Invoice():
         Move = Pool().get('account.move')
         print "Esta ingresando aqui****"
         moves = []
-        
+
         for invoice in invoices:
             invoice.set_number()
             if invoice.type == 'in_invoice':
@@ -163,6 +163,7 @@ class Invoice():
                 withholding = w
             withholding.write([withholding], {
                 'move': move.id,
+                'ref_invoice':self.id,
                 })
         return move
 
@@ -269,7 +270,6 @@ class ValidatedInvoice(Wizard):
                 'tipo':'RENTA',
                 }
             default['taxes'].append(taxes)
-            print "Default in ", default
             return default
         else:
             return self.raise_user_error('No ha configurado los impuestos de retencion del proveedor')
