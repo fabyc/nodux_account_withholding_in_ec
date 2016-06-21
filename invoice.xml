@@ -24,5 +24,18 @@ this repository contains the full copyright notices and license terms. -->
             <field name="model">account.invoice</field>
         </record>
 
+        <!-- relacionado-->
+        <record model="ir.action.act_window" id="act_withholding_r_form">
+            <field name="name">Withholdings</field>
+            <field name="res_model">account.withholding</field>
+            <field name="domain">[('ref_invoice', 'in', Eval('active_ids'))]</field>
+        </record>
+        <record model="ir.action.keyword"
+                id="act_open_withholding_keyword1">
+            <field name="keyword">form_relate</field>
+            <field name="model">account.invoice,-1</field>
+            <field name="action" ref="act_withholding_r_form"/>
+        </record>
+
     </data>
 </tryton>
