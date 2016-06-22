@@ -20,15 +20,19 @@ msgstr ""
 
 msgctxt "field:party.party,impuesto_iva:"
 msgid "IVA"
-msgstr "Impuesto IVA ATS"
+msgstr "Impuesto IVA"
 
 msgctxt "field:party.party,impuestos_renta:"
 msgid "FUENTE"
-msgstr "Impuesto Renta ATS"
+msgstr "Impuesto Renta"
 
 msgctxt "model:ir.action,name:act_withholding_in_withholding_form"
 msgid "Supplier withholdings"
 msgstr "Retenciones a proveedor"
+
+msgctxt "model:ir.action,name:act_withholding_r_form"
+msgid "Withholdings"
+msgstr "Retenciones"
 
 msgctxt "model:ir.action,name:print_move"
 msgid "Imprimir Asiento"
@@ -36,7 +40,11 @@ msgstr ""
 
 msgctxt "model:ir.action,name:print_withholding"
 msgid "Imprimir retencion proveedor"
-msgstr ""
+msgstr "Imprimir retención proveedor"
+
+msgctxt "model:ir.action,name:wizard_validated"
+msgid "Generar retencion a proveedor"
+msgstr "Generar retención a proveedor"
 
 msgctxt ""
 "model:ir.action.act_window.domain,name:act_withholding_in_withholding_domain_all"
@@ -191,7 +199,7 @@ msgstr ""
 
 msgctxt "odt:account.withholding.print_withholding:"
 msgid "FACTURA"
-msgstr ""
+msgstr "FACTURA"
 
 msgctxt "odt:account.withholding.print_withholding:"
 msgid "Fecha de Emisión"
@@ -271,8 +279,8 @@ msgstr ""
 
 msgctxt "view:party.party:"
 msgid "Impuestos retencion"
-msgstr ""
+msgstr "Impuestos retención"
 
 msgctxt "view:party.party:"
 msgid "Retencion"
-msgstr ""
+msgstr "Retención"

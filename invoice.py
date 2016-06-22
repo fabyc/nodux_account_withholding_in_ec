@@ -83,24 +83,91 @@ class Invoice():
     @ModelView.button
     @Workflow.transition('posted')
     def post(cls, invoices):
-        Move = Pool().get('account.move')
-        print "Esta ingresando aqui****"
-        moves = []
+        modules = None
+        modules_pos_e = None
+        module_e = None
+        module_pos_e = None
 
-        for invoice in invoices:
-            invoice.set_number()
-            if invoice.type == 'in_invoice':
+        Module = Pool().get('ir.module.module')
+        modules = Module.search([('name', '=', 'nodux_account_electronic_invoice_ec'), ('state', '=', 'installed')])
+        modules_pos_e = Module.search([('name', '=', 'nodux_sale_pos_electronic_invoice_ec'), ('state', '=', 'installed')])
+
+        if modules:
+            for mod in modules:
+                module_e = mod
+        if module_pos_e:
+            for mod_e in modules_pos_e:
+                module_pos_e = mod_e
+        if module_e :
+            Move = Pool().get('account.move')
+            moves = []
+
+            for invoice in invoices:
+                invoice.limit()
+                if invoice.type == u'out_invoice' or invoice.type == u'out_credit_note':
+                    invoice.create_move()
+                    invoice.set_number()
+                    moves.append(invoice.create_move())
+                    if invoice.lote == False:
+                        invoice.get_invoice_element()
+                        invoice.get_tax_element()
+                        invoice.generate_xml_invoice()
+                        invoice.get_detail_element()
+                        invoice.action_generate_invoice()
+                        invoice.connect_db()
+                elif invoice.type == 'in_invoice':
+                    invoice.create_move()
+                    if invoice.number:
+                        pass
+                    else:
+                        invoice.set_number()
+                    moves.append(invoice.create_move())
+                    if invoice.lote == False:
+                        Withholding = Pool().get('account.withholding')
+                        withholdings = Withholding.search([('number'), '=', invoice.ref_withholding])
+                        for withholding in withholdings:
+                        #invoice.authenticate()
+                            withholding.get_invoice_element_w()
+                            withholding.get_tax_element()
+                            withholding.generate_xml_invoice_w()
+                            withholding.get_taxes()
+                            withholding.action_generate_invoice_w()
+                            withholding.connect_db()
+                elif invoice.type == 'out_debit_note':
+                    invoice.create_move()
+                    invoice.set_number()
+                    moves.append(invoice.create_move())
+                    """
+                    if invoice.lote==False:
+                        #invoice.authenticate()
+                        invoice.get_tax_element()
+                        invoice.get_debit_note_element()
+                        invoice.get_detail_debit_note()
+                        invoice.generate_xml_debit_note()
+                        invoice.action_generate_debit_note()
+                        invoice.connect_db()
+                     """
+            cls.write([i for i in invoices if i.state != 'posted'], {
+                    'state': 'posted',
+                    })
+            Move.post([m for m in moves if m.state != 'posted'])
+
+        else:
+            Move = Pool().get('account.move')
+            moves = []
+
+            for invoice in invoices:
+                invoice.set_number()
+                if invoice.type == 'in_invoice':
+                    invoice.create_move()
                 invoice.create_move()
-            invoice.create_move()
-            moves.append(invoice.create_move())
+                moves.append(invoice.create_move())
 
-        cls.write([i for i in invoices if i.state != 'posted'], {
-                'state': 'posted',
-                })
-        Move.post([m for m in moves if m.state != 'posted'])
-        for invoice in invoices:
-            if invoice.type in ('out_invoice', 'out_credit_note'):
-                invoice.print_invoice()
+            cls.write([i for i in invoices if i.state != 'posted'], {
+                    'state': 'posted',
+                    })
+            Move.post([m for m in moves if m.state != 'posted'])
+
 
     def create_move(self):
         '''
@@ -225,8 +292,8 @@ class ValidatedInvoice(Wizard):
         if invoice.type == 'in_invoice':
             default['type'] = 'in_withholding'
 
-        if invoice.description:
-            default['number_w'] = invoice.description
+        if invoice.reference:
+            default['number_w'] = invoice.reference
 
         default['account'] = j.id
         default['withholding_address'] = invoice.invoice_address.id
@@ -238,8 +305,11 @@ class ValidatedInvoice(Wizard):
         default['currency']=invoice.currency.id
         default['journal']= journal.id
         default['taxes']=[]
-        default['base_imponible'] = invoice.taxes[0].base
-        default['iva']= invoice.taxes[0].amount
+        if invoice.taxes:
+            default['base_imponible'] = invoice.taxes[0].base
+            default['iva']= invoice.taxes[0].amount
+        else:
+            self.raise_user_error('Verifique los impuestos de la factura')
         default['withholding_date']= fecha_actual
 
         if invoice.party.impuesto_iva and invoice.party.impuestos_renta:
