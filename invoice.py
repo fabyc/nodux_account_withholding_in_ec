@@ -19,11 +19,10 @@ from trytond.transaction import Transaction
 from trytond.pool import Pool
 
 __all__ = ['Invoice', 'ValidatedInvoice', 'PrintMove']
-__metaclass__ = PoolMeta
 #customer->cliente
 
 class Invoice():
-    'Invoice'
+    __metaclass__ = PoolMeta
     __name__ = 'account.invoice'
 
     ref_withholding = fields.Char('Withholding')
@@ -116,13 +115,20 @@ class Invoice():
                         invoice.action_generate_invoice()
                         invoice.connect_db()
                 elif invoice.type == 'in_invoice':
+                    Configuration = pool.get('account.configuration')
+                    if Configuration(1).lote:
+                        w = Configuration(1).lote
+                        print "Esto es w", w
+                    else:
+                        pass
+
                     invoice.create_move()
                     if invoice.number:
                         pass
                     else:
                         invoice.set_number()
                     moves.append(invoice.create_move())
-                    if invoice.lote == False:
+                    if w == False:
                         Withholding = Pool().get('account.withholding')
                         withholdings = Withholding.search([('number'), '=', invoice.ref_withholding])
                         for withholding in withholdings:
@@ -353,22 +359,27 @@ class PrintMove(CompanyReport):
         super(PrintMove, cls).__setup__()
 
     @classmethod
-    def parse(cls, report, objects, data, localcontext=None):
+    def get_context(cls, records, data):
         pool = Pool()
         Move = pool.get('account.move')
         sum_debit = Decimal('0.0')
         sum_credit = Decimal('0.0')
         invoice = Transaction().context.get('move')
+
+        context = Transaction().context
+
+        report_context = super(InvoiceReport, cls).get_context(
+            records, data)
+            
         for invoice in objects:
             for line in invoice.move.lines:
                 sum_debit += line.debit
                 sum_credit += line.credit
 
-        localcontext['company'] = Transaction().context.get('company')
-        localcontext['move'] = Transaction().context.get('company')
-        localcontext['invoice'] = Transaction().context.get('invoice')
-        localcontext['sum_debit'] = sum_debit
-        localcontext['sum_credit'] = sum_credit
+        report_context['company'] = Transaction().context.get('company')
+        report_context['move'] = Transaction().context.get('company')
+        report_context['invoice'] = Transaction().context.get('invoice')
+        report_context['sum_debit'] = sum_debit
+        report_context['sum_credit'] = sum_credit
 
-        return super(PrintMove, cls).parse(report,
-                objects, data, localcontext)
+        return report_context

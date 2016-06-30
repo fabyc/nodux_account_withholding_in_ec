@@ -9,7 +9,6 @@ this repository contains the full copyright notices and license terms. -->
             <field name="model">account.invoice</field>
             <field name="report_name">account.invoice.print_move</field>
             <field name="report">nodux_account_withholding_in_ec/move.odt</field>
-            <field name="style"></field>
         </record>
 
        <record model="ir.action.keyword" id="report_move_keyword">
@@ -28,7 +27,7 @@ this repository contains the full copyright notices and license terms. -->
         <record model="ir.action.act_window" id="act_withholding_r_form">
             <field name="name">Withholdings</field>
             <field name="res_model">account.withholding</field>
-            <field name="domain">[('ref_invoice', 'in', Eval('active_ids'))]</field>
+            <field name="domain" eval="[('ref_invoice', 'in', Eval('active_ids'))]" pyson="1"/>
         </record>
         <record model="ir.action.keyword"
                 id="act_open_withholding_keyword1">

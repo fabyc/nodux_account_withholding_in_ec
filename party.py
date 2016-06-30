@@ -10,10 +10,9 @@ from trytond import backend
 from trytond.transaction import Transaction
 
 __all__ = ['Party']
-__metaclass__ = PoolMeta
-
 
 class Party:
+    __metaclass__ = PoolMeta
     __name__ = 'party.party'
 
     aplica_retencion = fields.Boolean('Aplica Retencion')

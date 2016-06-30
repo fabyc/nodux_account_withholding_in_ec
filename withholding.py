@@ -33,8 +33,12 @@ class PrintWithholding(CompanyReport):
         super(PrintWithholding, cls).__setup__()
 
     @classmethod
-    def parse(cls, report, objects, data, localcontext=None):
-        localcontext['company'] = Transaction().context.get('company')
+    def get_context(cls, records, data):
+        context = Transaction().context
+
+        report_context = super(PrintWithholding, cls).get_context(
+            records, data)
+
+        report_context['company'] = Transaction().context.get('company')
         #localcontext['invoice'] = Transaction().context.get('invoice')
-        return super(PrintWithholding, cls).parse(report,
-                objects, data, localcontext)
+        return report_context
