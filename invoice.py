@@ -49,7 +49,7 @@ class Invoice():
                     },
                 'post': {
                     'invisible': ~Eval('state').in_(['draft', 'validated']),
-                    'readonly' : Eval('state') == 'draft',
+                    'readonly' : (Eval('state') == 'draft') | (Eval('ref_withholding') == ''),
                     },
                 'pay': {
                     'invisible': Eval('state') != 'posted',
@@ -57,6 +57,12 @@ class Invoice():
                         Id('account', 'group_account')),
                     },
                 })
+
+
+    @staticmethod
+    def default_ref_withholding():
+        return ''
+
     @classmethod
     def withholdingOut(cls, invoices):
         '''
@@ -71,7 +77,6 @@ class Invoice():
     @ModelView.button_action('nodux_account_withholding_in_ec.wizard_validated')
     @Workflow.transition('validated')
     def validate_invoice(cls, invoices):
-
         for invoice in invoices:
             if invoice.type in ('in_credit_note'):
                 invoice.set_number()
