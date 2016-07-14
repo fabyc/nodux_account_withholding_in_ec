@@ -116,23 +116,32 @@ class Invoice():
                         invoice.action_generate_invoice()
                         invoice.connect_db()
                 elif invoice.type == 'in_invoice':
+                    Configuration = pool.get('account.configuration')
+                    if Configuration(1).lote:
+                        w = Configuration(1).lote
+                    else:
+                        pass
+
                     invoice.create_move()
                     if invoice.number:
                         pass
                     else:
                         invoice.set_number()
                     moves.append(invoice.create_move())
-                    if invoice.lote == False:
+                    if w == False:
                         Withholding = Pool().get('account.withholding')
                         withholdings = Withholding.search([('number'), '=', invoice.ref_withholding])
                         for withholding in withholdings:
                         #invoice.authenticate()
-                            withholding.get_invoice_element_w()
-                            withholding.get_tax_element()
-                            withholding.generate_xml_invoice_w()
-                            withholding.get_taxes()
-                            withholding.action_generate_invoice_w()
-                            withholding.connect_db()
+                            if withholding.fisic == True:
+                                pass
+                            else:
+                                withholding.get_invoice_element_w()
+                                withholding.get_tax_element()
+                                withholding.generate_xml_invoice_w()
+                                withholding.get_taxes()
+                                withholding.action_generate_invoice_w()
+                                withholding.connect_db()
                 elif invoice.type == 'out_debit_note':
                     invoice.create_move()
                     invoice.set_number()
