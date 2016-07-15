@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<data>
+    <xpath expr="/form/notebook/page[@id='invoice']/field[@name='lines']" position="before">
+        <label name="no_generate_withholding"/>
+        <field name="no_generate_withholding" xexpand="1"/>
+    </xpath>
+</data>

@@ -27,6 +27,9 @@ class Invoice():
     __name__ = 'account.invoice'
 
     ref_withholding = fields.Char('Withholding')
+    no_generate_withholding = fields.Boolean('No Generate Withholding', states={
+            'readonly': Eval('state') != 'draft',
+        })
 
     @classmethod
     def __setup__(cls):
@@ -45,11 +48,11 @@ class Invoice():
                         'tryton-go-previous'),
                     },
                 'validate_invoice': {
-                    'invisible': Eval('state') != 'draft',
+                    'invisible': (Eval('state') != 'draft'), #|( Eval('no_generate_withholding', True)
                     },
                 'post': {
                     'invisible': ~Eval('state').in_(['draft', 'validated']),
-                    'readonly' : (Eval('state') == 'draft') | (Eval('ref_withholding') == ''),
+                    'readonly' : (Eval('state') == 'draft'), #(Eval('ref_withholding') == ''),
                     },
                 'pay': {
                     'invisible': Eval('state') != 'posted',
@@ -62,6 +65,10 @@ class Invoice():
     @staticmethod
     def default_ref_withholding():
         return ''
+
+    @staticmethod
+    def default_no_generate_withholding():
+        return False
 
     @classmethod
     def withholdingOut(cls, invoices):
@@ -82,7 +89,11 @@ class Invoice():
                 invoice.set_number()
                 invoice.create_move()
             elif invoice.type in ('in_invoice'):
-                pass
+                if invoice.no_generate_withholding == True:
+                    invoice.set_number()
+                    invoice.create_move()
+                else:
+                    pass
 
     @classmethod
     @ModelView.button
@@ -237,15 +248,17 @@ class Invoice():
                 'move': move.id,
                 })
         if self.type == 'in_invoice':
-            #if self.party.aplica_retencion == True:
-            Withholding = Pool().get('account.withholding')
-            withholdings = Withholding.search([('number', '=', self.ref_withholding)])
-            for w in withholdings:
-                withholding = w
-            withholding.write([withholding], {
-                'move': move.id,
-                'ref_invoice':self.id,
-                })
+            if self.no_generate_withholding == True:
+                pass
+            else:
+                Withholding = Pool().get('account.withholding')
+                withholdings = Withholding.search([('number', '=', self.ref_withholding)])
+                for w in withholdings:
+                    withholding = w
+                withholding.write([withholding], {
+                    'move': move.id,
+                    'ref_invoice':self.id,
+                    })
         return move
 
     def _get_move_line_invoice_withholding(self):

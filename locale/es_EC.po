@@ -6,6 +6,10 @@ msgctxt "field:account.fiscalyear,in_withholding_sequence:"
 msgid "Supplier Withholding Sequence"
 msgstr "Secuencia de retención a proveedor"
 
+msgctxt "field:account.invoice,no_generate_withholding:"
+msgid "No Generate Withholding"
+msgstr "No Genera Retención"
+
 msgctxt "field:account.invoice,ref_withholding:"
 msgid "Withholding"
 msgstr "Retención"
