@@ -5,12 +5,15 @@ from .invoice import *
 from .account import *
 from .withholding import *
 from .party import *
+from .move import *
+
 def register():
     Pool.register(
         FiscalYear,
         Period,
         Invoice,
         Party,
+        Line,
         module='nodux_account_withholding_in_ec', type_='model')
     Pool.register(
         ValidatedInvoice,

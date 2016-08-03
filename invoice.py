@@ -390,7 +390,7 @@ class PrintMove(CompanyReport):
             for line in invoice.move.lines:
                 sum_debit += line.debit
                 sum_credit += line.credit
-
+        
         localcontext['company'] = Transaction().context.get('company')
         localcontext['move'] = Transaction().context.get('company')
         localcontext['invoice'] = Transaction().context.get('invoice')
