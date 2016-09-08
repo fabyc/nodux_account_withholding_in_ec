@@ -103,11 +103,11 @@ class Invoice():
         modules_pos_e = None
         module_e = None
         module_pos_e = None
-
+        w = False
         Module = Pool().get('ir.module.module')
         modules = Module.search([('name', '=', 'nodux_account_electronic_invoice_ec'), ('state', '=', 'installed')])
         modules_pos_e = Module.search([('name', '=', 'nodux_sale_pos_electronic_invoice_ec'), ('state', '=', 'installed')])
-
+        pool = Pool()
         if modules:
             for mod in modules:
                 module_e = mod
@@ -211,7 +211,6 @@ class Invoice():
         if self.type == 'in_invoice':
             #if self.party.aplica_retencion == True:
             move_lines += self._get_move_line_invoice_withholding()
-
         total = Decimal('0.0')
         total_currency = Decimal('0.0')
         for line in move_lines:
@@ -219,7 +218,7 @@ class Invoice():
             if line['amount_second_currency']:
                 total_currency += line['amount_second_currency'].copy_sign(
                     line['debit'] - line['credit'])
-
+        total = self.currency.round(total)
         term_lines = self.payment_term.compute(total, self.company.currency,
             self.invoice_date)
         remainder_total_currency = total_currency
@@ -350,7 +349,6 @@ class ValidatedInvoice(Wizard):
                 amount_w_i = value['amount']
             for value in amount_r:
                 amount_w_r = value['amount']
-            print "Valores ", amount_w_i, amount_w_r
             taxes = {
                 'tax': w_iva.id,
                 'manual':True,
@@ -390,7 +388,7 @@ class PrintMove(CompanyReport):
             for line in invoice.move.lines:
                 sum_debit += line.debit
                 sum_credit += line.credit
-        
+
         localcontext['company'] = Transaction().context.get('company')
         localcontext['move'] = Transaction().context.get('company')
         localcontext['invoice'] = Transaction().context.get('invoice')
