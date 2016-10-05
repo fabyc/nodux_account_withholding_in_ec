@@ -138,12 +138,12 @@ class Invoice():
                     else:
                         pass
 
-                    invoice.create_move()
+                    moves.append(invoice.create_move())
                     if invoice.number:
                         pass
                     else:
                         invoice.set_number()
-                    moves.append(invoice.create_move())
+
                     if w == False:
                         Withholding = Pool().get('account.withholding')
                         withholdings = Withholding.search([('number'), '=', invoice.ref_withholding])
@@ -152,6 +152,8 @@ class Invoice():
                             if withholding.fisic == True:
                                 pass
                             else:
+                                withholding.move = invoice.move
+                                withholding.save()
                                 withholding.get_invoice_element_w()
                                 withholding.get_tax_element()
                                 withholding.generate_xml_invoice_w()
@@ -195,9 +197,6 @@ class Invoice():
 
 
     def create_move(self):
-        '''
-        Create account move for the invoice and return the created move
-        '''
         pool = Pool()
         Move = pool.get('account.move')
         Period = pool.get('account.period')
