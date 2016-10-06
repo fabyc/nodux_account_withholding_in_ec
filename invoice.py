@@ -146,13 +146,14 @@ class Invoice():
 
                     if w == False:
                         Withholding = Pool().get('account.withholding')
-                        withholdings = Withholding.search([('number'), '=', invoice.ref_withholding])
+                        withholdings = Withholding.search([('number', '=', invoice.ref_withholding), ('fisic', '=', False)])
                         for withholding in withholdings:
                         #invoice.authenticate()
                             if withholding.fisic == True:
                                 pass
                             else:
                                 withholding.move = invoice.move
+                                withholding.ref_invoice = invoice.id
                                 withholding.save()
                                 withholding.get_invoice_element_w()
                                 withholding.get_tax_element()
@@ -250,7 +251,8 @@ class Invoice():
                 pass
             else:
                 Withholding = Pool().get('account.withholding')
-                withholdings = Withholding.search([('number', '=', self.ref_withholding)])
+                withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+
                 for w in withholdings:
                     withholding = w
                 withholding.write([withholding], {
@@ -263,7 +265,7 @@ class Invoice():
         res = []
         pool = Pool()
         Withholding = pool.get('account.withholding')
-        withholdings = Withholding.search([('number', '=', self.ref_withholding)])
+        withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
         if withholdings:
             for w in withholdings:
                 withholding = w
