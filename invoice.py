@@ -48,11 +48,11 @@ class Invoice():
                         'tryton-go-previous'),
                     },
                 'validate_invoice': {
-                    'invisible': (Eval('state') != 'draft'), #|( Eval('no_generate_withholding', True)
+                    'invisible': (Eval('state') != 'draft'),
                     },
                 'post': {
                     'invisible': ~Eval('state').in_(['draft', 'validated']),
-                    'readonly' : (Eval('state') == 'draft'), #(Eval('ref_withholding') == ''),
+                    'readonly' : (Eval('state') == 'draft'),
                     },
                 'pay': {
                     'invisible': Eval('state') != 'posted',
@@ -60,11 +60,15 @@ class Invoice():
                         Id('account', 'group_account')),
                     },
                 })
-
+        cls.reference.states['required'] = Eval('type') == 'in_invoice'
 
     @staticmethod
     def default_ref_withholding():
         return ''
+
+    @staticmethod
+    def default_reference():
+        return "001-001-"
 
     @staticmethod
     def default_no_generate_withholding():
@@ -89,6 +93,8 @@ class Invoice():
                 invoice.set_number()
                 invoice.create_move()
             elif invoice.type in ('in_invoice'):
+                if invoice.reference == "001-001-":
+                    invoice.raise_user_error("No ha modificado la referencia de la factura")
                 if invoice.no_generate_withholding == True:
                     invoice.set_number()
                     invoice.create_move()
