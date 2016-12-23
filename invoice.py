@@ -95,6 +95,8 @@ class Invoice():
             elif invoice.type in ('in_invoice'):
                 if invoice.reference == "001-001-":
                     invoice.raise_user_error("No ha modificado la referencia de la factura")
+                if (invoice.reference[3:4] != '-') | (invoice.reference[7:8] != '-'):
+                    invoice.raise_user_error("Debe ingresar establecimiento y punto de emision. Ej. 001-001-")
                 if len(invoice.reference) < 17:
                     if len(invoice.reference) == 16:
                         invoice.reference = invoice.reference[0:8] + '0' + invoice.reference[8:16]
@@ -107,11 +109,11 @@ class Invoice():
                     elif len(invoice.reference) == 12:
                         invoice.reference = invoice.reference[0:8] + '00000' + invoice.reference[8:12]
                     elif len(invoice.reference) == 11:
-                        invoice.reference = invoice.reference[0:8] + '00000' + invoice.reference[8:11]
+                        invoice.reference = invoice.reference[0:8] + '000000' + invoice.reference[8:11]
                     elif len(invoice.reference) == 10:
-                        invoice.reference = invoice.reference[0:8] + '00000' + invoice.reference[8:10]
+                        invoice.reference = invoice.reference[0:8] + '0000000' + invoice.reference[8:10]
                     elif len(invoice.reference) == 9:
-                        invoice.reference = invoice.reference[0:8] + '00000' + invoice.reference[8:9]
+                        invoice.reference = invoice.reference[0:8] + '00000000' + invoice.reference[8:9]
                     invoice.save()
                 if invoice.no_generate_withholding == True:
                     invoice.set_number()
