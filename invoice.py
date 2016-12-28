@@ -410,14 +410,16 @@ class PrintMove(CompanyReport):
         Move = pool.get('account.move')
         sum_debit = Decimal('0.0')
         sum_credit = Decimal('0.0')
-        invoice = Transaction().context.get('move')
+        invoice = Transaction().context.get('invoice')
         for invoice in objects:
-            for line in invoice.move.lines:
-                sum_debit += line.debit
-                sum_credit += line.credit
+            if invoice.state == "posted":
+                for line in invoice.move.lines:
+                    sum_debit += line.debit
+                    sum_credit += line.credit
+            else:
+                invoice.raise_user_error('No se puede imprimir el asiento de una factura en estado Borrador')
 
         localcontext['company'] = Transaction().context.get('company')
-        localcontext['move'] = Transaction().context.get('company')
         localcontext['invoice'] = Transaction().context.get('invoice')
         localcontext['sum_debit'] = sum_debit
         localcontext['sum_credit'] = sum_credit
