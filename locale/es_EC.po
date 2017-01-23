@@ -22,13 +22,25 @@ msgctxt "field:party.party,aplica_retencion:"
 msgid "Aplica Retencion"
 msgstr ""
 
+msgctxt "field:party.party,fecha_fin:"
+msgid "Fecha fin autorizacion"
+msgstr ""
+
+msgctxt "field:party.party,fecha_inicio:"
+msgid "Fecha inicio autorizacion"
+msgstr ""
+
 msgctxt "field:party.party,impuesto_iva:"
 msgid "IVA"
-msgstr "Impuesto IVA"
+msgstr "IVA"
 
 msgctxt "field:party.party,impuestos_renta:"
 msgid "FUENTE"
-msgstr "Impuesto Renta"
+msgstr "RENTA"
+
+msgctxt "field:party.party,num_autorizacion:"
+msgid "Autorizacion SRI No."
+msgstr ""
 
 msgctxt "model:ir.action,name:act_withholding_in_withholding_form"
 msgid "Supplier withholdings"
