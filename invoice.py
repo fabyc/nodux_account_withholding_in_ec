@@ -338,63 +338,66 @@ class ValidatedInvoice(Wizard):
         invoice.set_number()
         #invoice.create_move()
 
-        pool = Pool()
-        Taxes = pool.get('account.tax')
-        taxes_1 = Taxes.search([('type', '=', 'percentage')])
-
-        if invoice.type == 'in_invoice':
-            default['type'] = 'in_withholding'
-
-        if invoice.reference:
-            default['number_w'] = invoice.reference
-
-        default['account'] = j.id
-        default['withholding_address'] = invoice.invoice_address.id
-        default['description'] = invoice.description
-        default['reference'] = invoice.number
-        default['comment']=invoice.comment
-        default['company']=invoice.company.id
-        default['party']=invoice.party.id
-        default['currency']=invoice.currency.id
-        default['journal']= journal.id
-        default['taxes']=[]
-        if invoice.taxes:
-            default['base_imponible'] = invoice.taxes[0].base
-            default['iva']= invoice.taxes[0].amount
+        if invoice.no_generate_withholding == True:
+            return self.raise_user_error('Factura no genera Retencion')
         else:
-            self.raise_user_error('Verifique los impuestos de la factura')
-        default['withholding_date']= fecha_actual
-
-        if invoice.party.impuesto_iva and invoice.party.impuestos_renta:
             pool = Pool()
-            Tax = pool.get('account.tax')
-            w_iva = invoice.party.impuesto_iva
-            w_renta = invoice.party.impuestos_renta
-            amount_i = Tax.compute([w_iva], invoice.taxes[0].amount, 1)
-            amount_r = Tax.compute([w_renta], invoice.taxes[0].base, 1 )
-            for value in amount_i:
-                amount_w_i = value['amount']
-            for value in amount_r:
-                amount_w_r = value['amount']
-            taxes = {
-                'tax': w_iva.id,
-                'manual':True,
-                'base': invoice.taxes[0].amount,
-                'amount': amount_w_i,
-                'tipo':'IVA',
-                }
-            default['taxes'].append(taxes)
-            taxes= {
-                'tax': w_renta.id,
-                'manual':True,
-                'base': invoice.taxes[0].base,
-                'amount': amount_w_r,
-                'tipo':'RENTA',
-                }
-            default['taxes'].append(taxes)
-            return default
-        else:
-            return self.raise_user_error('No ha configurado los impuestos de retencion del proveedor')
+            Taxes = pool.get('account.tax')
+            taxes_1 = Taxes.search([('type', '=', 'percentage')])
+
+            if invoice.type == 'in_invoice':
+                default['type'] = 'in_withholding'
+
+            if invoice.reference:
+                default['number_w'] = invoice.reference
+
+            default['account'] = j.id
+            default['withholding_address'] = invoice.invoice_address.id
+            default['description'] = invoice.description
+            default['reference'] = invoice.number
+            default['comment']=invoice.comment
+            default['company']=invoice.company.id
+            default['party']=invoice.party.id
+            default['currency']=invoice.currency.id
+            default['journal']= journal.id
+            default['taxes']=[]
+            if invoice.taxes:
+                default['base_imponible'] = invoice.taxes[0].base
+                default['iva']= invoice.taxes[0].amount
+            else:
+                self.raise_user_error('Verifique los impuestos de la factura')
+            default['withholding_date']= fecha_actual
+
+            if invoice.party.impuesto_iva and invoice.party.impuestos_renta:
+                pool = Pool()
+                Tax = pool.get('account.tax')
+                w_iva = invoice.party.impuesto_iva
+                w_renta = invoice.party.impuestos_renta
+                amount_i = Tax.compute([w_iva], invoice.taxes[0].amount, 1)
+                amount_r = Tax.compute([w_renta], invoice.taxes[0].base, 1 )
+                for value in amount_i:
+                    amount_w_i = value['amount']
+                for value in amount_r:
+                    amount_w_r = value['amount']
+                taxes = {
+                    'tax': w_iva.id,
+                    'manual':True,
+                    'base': invoice.taxes[0].amount,
+                    'amount': amount_w_i,
+                    'tipo':'IVA',
+                    }
+                default['taxes'].append(taxes)
+                taxes= {
+                    'tax': w_renta.id,
+                    'manual':True,
+                    'base': invoice.taxes[0].base,
+                    'amount': amount_w_r,
+                    'tipo':'RENTA',
+                    }
+                default['taxes'].append(taxes)
+                return default
+            else:
+                return self.raise_user_error('No ha configurado los impuestos de retencion del proveedor')
 
 class PrintMove(CompanyReport):
     'Print Move'
