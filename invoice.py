@@ -228,6 +228,8 @@ class Invoice():
         Move = pool.get('account.move')
         Period = pool.get('account.period')
         Date = pool.get('ir.date')
+        Module = pool.get('ir.module.module')
+        moduleE = Module.search([('name', '=', 'nodux_account_electronic_invoice_ec'), ('state', '=', 'installed')])
 
         if self.move:
             return self.move
@@ -277,7 +279,10 @@ class Invoice():
                 pass
             else:
                 Withholding = Pool().get('account.withholding')
-                withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+                if moduleE:
+                    withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+                else:
+                    withholdings = Withholding.search([('number', '=', self.ref_withholding)])
 
                 for w in withholdings:
                     withholding = w
@@ -291,7 +296,14 @@ class Invoice():
         res = []
         pool = Pool()
         Withholding = pool.get('account.withholding')
-        withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+        Module = pool.get('ir.module.module')
+        moduleE = Module.search([('name', '=', 'nodux_account_electronic_invoice_ec'), ('state', '=', 'installed')])
+
+        if moduleE:
+            withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+        else:
+            withholdings = Withholding.search([('number', '=', self.ref_withholding)])
+
         if withholdings:
             for w in withholdings:
                 withholding = w
