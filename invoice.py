@@ -215,9 +215,9 @@ class Invoice():
 
             for invoice in invoices:
                 if invoice.number:
-                        pass
-                    else:
-                        invoice.set_number()
+                    pass
+                else:
+                    invoice.set_number()
                 if invoice.type == 'in_invoice':
                     invoice.create_move()
                 invoice.create_move()
@@ -246,7 +246,6 @@ class Invoice():
             if invoice.no_generate_withholding == True:
                 pass
             else:
-                #if self.party.aplica_retencion == True:
                 move_lines += self._get_move_line_invoice_withholding()
         total = Decimal('0.0')
         total_currency = Decimal('0.0')
