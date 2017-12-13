@@ -237,8 +237,11 @@ class Invoice():
         move_lines = self._get_move_line_invoice_line()
         move_lines += self._get_move_line_invoice_tax()
         if self.type == 'in_invoice':
-            #if self.party.aplica_retencion == True:
-            move_lines += self._get_move_line_invoice_withholding()
+            if invoice.no_generate_withholding == True:
+                pass
+            else:
+                #if self.party.aplica_retencion == True:
+                move_lines += self._get_move_line_invoice_withholding()
         total = Decimal('0.0')
         total_currency = Decimal('0.0')
         for line in move_lines:
@@ -280,9 +283,9 @@ class Invoice():
             else:
                 Withholding = Pool().get('account.withholding')
                 if moduleE:
-                    withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+                    withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False), ('party', '=', self.party)])
                 else:
-                    withholdings = Withholding.search([('number', '=', self.ref_withholding)])
+                    withholdings = Withholding.search([('number', '=', self.ref_withholding), ('party', '=', self.party)])
 
                 for w in withholdings:
                     withholding = w
@@ -300,9 +303,9 @@ class Invoice():
         moduleE = Module.search([('name', '=', 'nodux_account_electronic_invoice_ec'), ('state', '=', 'installed')])
 
         if moduleE:
-            withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False)])
+            withholdings = Withholding.search([('number', '=', self.ref_withholding), ('fisic', '=', False), ('party', '=', self.party)])
         else:
-            withholdings = Withholding.search([('number', '=', self.ref_withholding)])
+            withholdings = Withholding.search([('number', '=', self.ref_withholding), ('party', '=', self.party)])
 
         if withholdings:
             for w in withholdings:

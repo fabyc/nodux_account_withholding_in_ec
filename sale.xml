@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<!-- This file is part of the sale_payment module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="sale_payment_view_form">
+            <field name="model">sale.payment.form</field>
+            <field name="inherit"
+                ref="sale_payment.sale_payment_view_form"/>
+            <field name="name">sale_payment_form</field>
+        </record>
+        <record model="ir.ui.view" id="sale_pos_view_form">
+            <field name="model">sale.sale</field>
+            <field name="type">form</field>
+            <field name="inherit"
+                ref="sale_pos.sale_pos_view_form"/>
+            <field name="name">sale_pos_form</field>
+        </record>
+
+        <record model="ir.action.report" id="report_invoice_pos">
+            <field name="name">Invoice</field>
+            <field name="model">sale.sale</field>
+            <field name="report_name">nodux_sale_payment.invoice_pos</field>
+            <field name="report">nodux_sale_payment/invoice_educaes.odt</field>
+        </record>
+
+        <record model="ir.action.keyword" id="report_invoice_pos_keyword">
+            <field name="keyword">form_print</field>
+            <field name="model">sale.sale,-1</field>
+            <field name="action" ref="report_invoice_pos"/>
+        </record>
+
+        <record model="ir.action.report" id="report_sale">
+            <field name="name">Cotizacion</field>
+            <field name="model">sale.sale</field>
+            <field name="report_name">sale.quotation</field>
+            <field name="report">nodux_sale_payment/sale.odt</field>
+        </record>
+        <record model="ir.action.keyword" id="report_sale_keyword">
+            <field name="keyword">form_print</field>
+            <field name="model">sale.sale,-1</field>
+            <field name="action" ref="report_sale"/>
+        </record>
+        <!--Group-->
+        <record model="res.group" id="group_stock_force">
+            <field name="name">Nodux - Asignacion forzada de Stock</field>
+        </record>
+
+        <record model="res.user-res.group"
+            id="user_admin_group_stock_foce">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_stock_force"/>
+        </record>
+
+        <record model="res.user-res.group"
+            id="user_trigger_group_stock_force">
+            <field name="user" ref="res.user_admin"/>
+            <field name="group" ref="group_stock_force"/>
+        </record>
+
+        <!-- Views Card -->
+        <record model="ir.ui.view" id="card_view_tree">
+            <field name="model">sale.card</field>
+            <field name="type">tree</field>
+            <field name="name">card_tree</field>
+        </record>
+
+        <record model="ir.ui.view" id="card_view_form">
+            <field name="model">sale.card</field>
+            <field name="type">form</field>
+            <field name="name">card_form</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_card_form">
+            <field name="name">Tarjetas de Credito</field>
+            <field name="res_model">sale.card</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_card_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="card_view_tree"/>
+            <field name="act_window" ref="act_card_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_card_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="card_view_form"/>
+            <field name="act_window" ref="act_card_form"/>
+        </record>
+        <menuitem parent="account.menu_account_configuration" action="act_card_form"
+            id="menu_card_form"/>
+
+        <!-- Views Sale Bank -->
+        <record model="ir.ui.view" id="sale_bank_view_tree">
+            <field name="model">sale.bank</field>
+            <field name="type">tree</field>
+            <field name="name">sale_bank_tree</field>
+        </record>
+
+        <record model="ir.ui.view" id="sale_bank_view_form">
+            <field name="model">sale.bank</field>
+            <field name="type">form</field>
+            <field name="name">sale_bank_form</field>
+        </record>
+
+        <record model="ir.action.act_window" id="act_sale_bank_form">
+            <field name="name">Bancos Forma de Pago Ventas</field>
+            <field name="res_model">sale.bank</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_sale_bank_form_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="sale_bank_view_tree"/>
+            <field name="act_window" ref="act_sale_bank_form"/>
+        </record>
+        <record model="ir.action.act_window.view" id="act_sale_bank_form_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="sale_bank_view_form"/>
+            <field name="act_window" ref="act_sale_bank_form"/>
+        </record>
+        <menuitem parent="account.menu_account_configuration" action="act_sale_bank_form"
+            id="menu_sale_bank_form"/>
+    </data>
+</tryton>
