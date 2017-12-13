@@ -116,7 +116,10 @@ class Invoice():
                         invoice.reference = invoice.reference[0:8] + '00000000' + invoice.reference[8:9]
                     invoice.save()
                 if invoice.no_generate_withholding == True:
-                    invoice.set_number()
+                    if invoice.number:
+                        pass
+                    else:
+                        invoice.set_number()
                     invoice.create_move()
                 else:
                     pass
@@ -211,7 +214,10 @@ class Invoice():
             moves = []
 
             for invoice in invoices:
-                invoice.set_number()
+                if invoice.number:
+                        pass
+                    else:
+                        invoice.set_number()
                 if invoice.type == 'in_invoice':
                     invoice.create_move()
                 invoice.create_move()
@@ -350,7 +356,10 @@ class ValidatedInvoice(Wizard):
 
         invoice = Invoice(Transaction().context.get('active_id'))
 
-        invoice.set_number()
+        if invoice.number:
+            pass
+        else:
+            invoice.set_number()
         #invoice.create_move()
 
         if invoice.no_generate_withholding == True:
